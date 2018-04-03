@@ -1,9 +1,8 @@
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from rest_framework.serializers import (
-    CharField,EmailField,HyperlinkedIdentityField,ModelSerializer,SerializerMethodField,ValidationError
+    CharField,EmailField,ModelSerializer,ValidationError
     )
 from .models import *
 User = get_user_model()
@@ -14,6 +13,7 @@ class UserDetailSerializer(ModelSerializer):
         fields = [
             'username','email','first_name','last_name',
         ]
+
 
 class UserCreateSerializer(ModelSerializer):
     email = EmailField(label='Email Address')
@@ -92,14 +92,16 @@ class UserLoginSerializer(ModelSerializer):
             if user.check_password(password):
                 return data
             else:
-                return ValidationError({'status': 400,'message': 'Make sure your email and password are correct','error':"Password does not match",'username': username })
-        except User.DoesNotExist:
+                raise ValidationError({'status': 400,'message': 'Make sure your email and password are correct','error':"Password does not match",'username': username })
+        except:
             raise ValidationError({'status': 400,'message': 'Make sure your email and password are correct','error':"User does not exist",'username': username })
+
 
 class UsersSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('id','username','email')
+
 
 class ProfileCreateUpdateSerializer(ModelSerializer):
     class Meta:

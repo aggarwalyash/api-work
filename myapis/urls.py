@@ -1,7 +1,5 @@
 from django.conf.urls import url
 from django.contrib import admin
-
-# from myapis.views import UserCreateAPIView,UserLoginAPIView,UsersAPIView
 from myapis.views import *
 
 urlpatterns = [

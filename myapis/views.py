@@ -1,23 +1,14 @@
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from django.http import HttpResponse
-from rest_framework.filters import (
-        SearchFilter,OrderingFilter,
-    )
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
-from rest_framework.mixins import DestroyModelMixin, UpdateModelMixin
 from rest_framework.generics import (
     CreateAPIView,DestroyAPIView,ListAPIView,UpdateAPIView,RetrieveAPIView,RetrieveUpdateAPIView
     )
 from rest_framework.permissions import (
     AllowAny,IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly,
     )
-from .permissions import IsOwnerOrReadOnly
-from .pagination import PostLimitOffsetPagination, PostPageNumberPagination
 from .models import *
 
 User = get_user_model()
@@ -26,21 +17,11 @@ from .serializers import (
     UserCreateSerializer,UserLoginSerializer,UsersSerializer,ProfileCreateUpdateSerializer
     )
 
-class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
     queryset = User.objects.all()
     permission_classes = [AllowAny]
-
 
 
 class UserLoginAPIView(APIView):
@@ -57,7 +38,7 @@ class UserLoginAPIView(APIView):
             new_data['message'] = 'Welcome back, ' + new_data['username']
             return Response(new_data, status=HTTP_200_OK)
 
-        return Response(serializers.errors, status=HTTP_400_BAD_REQUEST)
+        return Response(serializers.data, status=HTTP_400_BAD_REQUEST)
 
 class UsersAPIView(ListAPIView):
     permission_classes = [AllowAny]
