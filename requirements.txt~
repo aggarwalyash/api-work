@@ -2,3 +2,4 @@ Django==2.0.3
 djangorestframework==3.7.7
 pytz==2018.3
 gunicorn==19.7.1
+whitenoise==3.3.1
